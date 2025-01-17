@@ -1,0 +1,109 @@
+---
+const currentYear = new Date().getFullYear();
+
+const links = [
+  { label: 'Home', path: '/' },
+  { label: 'Blog', path: '/blog' },
+  { label: 'About', path: '/about' }
+];
+---
+
+<footer class="bg-[rgba(13,17,23,0.95)] border-t border-[rgba(0,255,196,0.1)]">
+  <div class="max-w-6xl mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <div>
+        <h2 class="font-cyber text-xl text-cyber-primary mb-4">メモログ</h2>
+        <p class="text-gray-400">
+          トレードやプログラミング等に関する個人的メモ
+        </p>
+      </div>
+      
+      <div>
+        <h2 class="font-cyber text-xl text-cyber-secondary mb-4">Links</h2>
+        <ul class="space-y-2">
+          {links.map(link => (
+            <li>
+              <a
+                href={link.path}
+                class="text-gray-400 hover:text-cyber-primary transition-colors"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="font-cyber text-xl text-cyber-secondary mb-4">Categories</h2>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-sm px-3 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary">
+            Trading
+          </span>
+          <span class="text-sm px-3 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary">
+            Programming
+          </span>
+          <span class="text-sm px-3 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary">
+            Gaming
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center pt-8 border-t border-[rgba(0,255,196,0.1)]">
+      <p class="text-gray-400">
+        © {currentYear} メモログ. All rights reserved.
+      </p>
+    </div>
+  </div>
+
+  <button
+    id="scrollToTop"
+    class="fixed bottom-8 right-8 bg-[rgba(13,17,23,0.9)] border border-cyber-primary text-cyber-primary hover:text-cyber-secondary hover:border-cyber-secondary transition-colors p-3 rounded-lg opacity-0 invisible"
+    aria-label="トップに戻る"
+  >
+    <span class="block transform -rotate-90">➤</span>
+  </button>
+</footer>
+
+<script>
+  function initScrollToTop() {
+    const scrollToTopButton = document.getElementById('scrollToTop');
+    
+    if (!scrollToTopButton) return;
+
+    function toggleScrollToTopButton() {
+      if (window.scrollY > 300) {
+        scrollToTopButton.classList.remove('opacity-0', 'invisible');
+        scrollToTopButton.classList.add('opacity-100');
+      } else {
+        scrollToTopButton.classList.add('opacity-0');
+        scrollToTopButton.classList.remove('opacity-100');
+        setTimeout(() => {
+          if (window.scrollY <= 300) {
+            scrollToTopButton.classList.add('invisible');
+          }
+        }, 200);
+      }
+    }
+
+    scrollToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    window.addEventListener('scroll', toggleScrollToTopButton);
+    toggleScrollToTopButton();
+  }
+
+  initScrollToTop();
+  document.addEventListener('astro:page-load', initScrollToTop);
+</script>
+
+<style>
+  #scrollToTop {
+    transition: opacity 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  }
+</style>

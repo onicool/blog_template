@@ -1,0 +1,33 @@
+---
+title: "TypeScriptで始める型安全なプログラミング"
+description: "TypeScriptの基本的な型システムから高度な型の使い方まで、実践的な例を交えて解説します。"
+pubDate: 2024-03-15
+tags: ["programming", "typescript", "javascript"]
+---
+
+TypeScriptは、JavaScriptに静的型付けを追加したプログラミング言語です。本記事では、TypeScriptの基本から実践的な使い方まで解説していきます。
+
+## 基本的な型
+
+```typescript
+let name: string = "John";
+let age: number = 30;
+let isActive: boolean = true;
+```
+
+## インターフェースと型エイリアス
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+type UserResponse = {
+  data: User;
+  status: number;
+};
+```
+
+続きは次回...

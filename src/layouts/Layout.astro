@@ -1,0 +1,179 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  article?: boolean;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  tags?: string[];
+}
+
+const {
+  title,
+  description = 'トレードやプログラミング等に関する個人的メモ',
+  image,
+  article,
+  publishedTime,
+  modifiedTime,
+  tags
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
+
+const isActive = (path: string) => {
+  if (path === '/blog') {
+    return currentPath.startsWith('/blog');
+  }
+  return currentPath === path;
+};
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="generator" content={Astro.generator} />
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      article={article}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+    />
+    <ViewTransitions />
+  </head>
+  <body class="bg-cyber-dark text-gray-200 min-h-screen flex flex-col">
+    <div class="cyber-gradient">
+      <header class="border-b border-[rgba(0,255,196,0.1)]">
+        <div class="max-w-6xl mx-auto px-4 py-6">
+          <nav class="flex justify-between items-center mb-8">
+            <a href="/" class="cyber-logo font-cyber text-3xl text-cyber-primary hover:text-cyber-secondary transition-colors">
+              メモログ
+            </a>
+            <div class="flex items-center space-x-8">
+              <a
+                href="/"
+                class={`cyber-link font-cyber relative ${
+                  isActive('/')
+                    ? 'text-cyber-primary'
+                    : 'text-gray-300 hover:text-cyber-primary'
+                }`}
+              >
+                Home
+              </a>
+              <a
+                href="/blog"
+                class={`cyber-link font-cyber relative ${
+                  isActive('/blog')
+                    ? 'text-cyber-primary'
+                    : 'text-gray-300 hover:text-cyber-primary'
+                }`}
+              >
+                Blog
+              </a>
+              <a
+                href="/about"
+                class={`cyber-link font-cyber relative ${
+                  isActive('/about')
+                    ? 'text-cyber-primary'
+                    : 'text-gray-300 hover:text-cyber-primary'
+                }`}
+              >
+                About
+              </a>
+            </div>
+          </nav>
+          <Breadcrumb currentPath={currentPath} />
+        </div>
+      </header>
+
+      <main class="max-w-6xl mx-auto px-4 py-8">
+        <slot />
+      </main>
+    </div>
+
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+  }
+  
+  .cyber-gradient {
+    background: linear-gradient(to bottom,
+      rgba(13, 17, 23, 0.95),
+      rgba(13, 17, 23, 0.8)
+    );
+    flex-grow: 1;
+    position: relative;
+  }
+
+  .cyber-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 255, 196, 0.2),
+      transparent
+    );
+  }
+
+  .cyber-logo {
+    position: relative;
+    text-shadow: 0 0 10px rgba(0, 255, 196, 0.5);
+  }
+
+  .cyber-link {
+    padding-bottom: 2px;
+  }
+
+  .cyber-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 255, 196, 0.8),
+      transparent
+    );
+    transition: width 0.3s ease;
+  }
+
+  .cyber-link:hover::after,
+  .cyber-link.active::after {
+    width: 100%;
+  }
+
+  ::selection {
+    background: rgba(0, 255, 196, 0.3);
+    color: #fff;
+  }
+
+  /* トランジションのアニメーション設定 */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.2s;
+  }
+</style>

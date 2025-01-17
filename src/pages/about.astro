@@ -1,0 +1,119 @@
+---
+import { siteConfig } from '../config/site';
+import Layout from '../layouts/Layout.astro';
+import { getEntry } from 'astro:content';
+
+const aboutData = await getEntry('about', 'profile');
+const { profile, stats, skills, social } = aboutData.data;
+
+// CSSのインポートを追加
+import '../styles/about.css';
+---
+
+<Layout title={siteConfig.pages.about.title}>
+  <div class="bg-cyber-light p-4 md:p-8 rounded-lg border border-cyber-primary">
+    <div class="profile-layout">
+      <!-- プロフィール画像エリア -->
+      <div class="profile-image-area">
+        <img
+          src={profile.image}
+          alt={profile.name}
+          class="profile-image"
+        />
+        <div class="handle-overlay">
+          {profile.handle}
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <!-- RPGステータスエリア -->
+        <div class="status-area">
+          <div>
+            <div class="flex justify-between items-center">
+              <span class="cyber-text">LEVEL {stats.level}</span>
+              <span class="text-sm text-gray-400">Developer</span>
+            </div>
+            <div class="level-bar">
+              <div
+                class="level-progress"
+                style={`width: ${(stats.exp / stats.nextExp) * 100}%`}
+              />
+            </div>
+            <div class="flex justify-end mt-1">
+              <span class="text-xs text-gray-400">
+                EXP: {stats.exp}/{stats.nextExp}
+              </span>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            {stats.attributes.map(attr => (
+              <div class="stat-row">
+                <span class="stat-label">{attr.name}</span>
+                <div class="stat-bar">
+                  <div
+                    class="stat-fill"
+                    style={`width: ${(attr.value / 100) * 100}%`}
+                  />
+                </div>
+                <span class="stat-value">{attr.value}</span>
+                <div class="text-xs text-gray-400 ml-2">
+                  {attr.description}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- プロフィール説明 -->
+        <div class="bg-cyber-dark p-4 rounded-lg border border-cyber-primary">
+          <p class="text-gray-300">{profile.description}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills Section -->
+    <div class="mt-8">
+      <h2 class="cyber-heading">Skills</h2>
+      <div class="skills-grid">
+        {skills.map(skill => (
+          <div class="skill-category">
+            <h3 class="cyber-text mb-2">{skill.category}</h3>
+            <ul class="space-y-2 text-gray-300">
+              {skill.items.map(item => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="mt-8">
+      <h2 class="cyber-heading">Contact</h2>
+      <p class="text-gray-300">
+        ご質問やお問い合わせは、各記事のコメント欄またはSNSにてお願いいたします。
+      </p>
+    </div>
+  </div>
+
+  <!-- SNS Section -->
+  <aside class="mt-8">
+    <div class="bg-cyber-light p-4 rounded-lg border border-cyber-primary">
+      <h2 class="cyber-heading">SNS</h2>
+      <div class="flex flex-col gap-4">
+        {social.map(({ platform, url }) => (
+          <a
+            href={url}
+            class="text-gray-300 hover:text-cyber-primary transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {platform}
+          </a>
+        ))}
+      </div>
+    </div>
+  </aside>
+</Layout>

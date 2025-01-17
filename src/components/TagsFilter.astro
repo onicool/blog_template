@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+
+// 記事からタグを収集し、使用頻度でソート
+const posts = await getCollection('blog');
+const tagCounts = posts.reduce((acc, post) => {
+  post.data.tags.forEach(tag => {
+    acc[tag] = (acc[tag] || 0) + 1;
+  });
+  return acc;
+}, {} as Record<string, number>);
+
+// タグのカテゴリー定義
+const tagCategories = {
+  "Programming": ["typescript", "javascript", "react", "nextjs", "rust", "async", "docker", "infrastructure"],
+  "Trading": ["trading", "technical-analysis", "risk-management", "psychology", "market-analysis"],
+  "Blockchain": ["crypto", "defi", "blockchain", "investment"]
+};
+
+// カテゴリーごとにタグを整理し、使用頻度でソート
+const categorizedTags = Object.entries(tagCategories).map(([category, categoryTags]) => ({
+  category,
+  tags: categoryTags
+    .filter(tag => tagCounts[tag])
+    .sort((a, b) => (tagCounts[b] || 0) - (tagCounts[a] || 0))
+}));
+---
+
+<div>
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="font-cyber text-xl text-cyber-secondary">タグ</h2>
+    <button
+      id="clearTagButton"
+      class="text-sm text-cyber-primary hover:text-cyber-secondary transition-colors hidden"
+    >
+      選択解除 ×
+    </button>
+  </div>
+
+  {categorizedTags.map(({ category, tags }) => tags.length > 0 && (
+    <div class="mb-4">
+      <h3 class="font-cyber text-cyber-secondary text-sm mb-2">{category}</h3>
+      <div class="flex flex-wrap gap-2">
+        {tags.map(tag => (
+          <button
+            data-tag={tag}
+            data-count={tagCounts[tag]}
+            class="tag-button text-xs md:text-sm px-3 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary hover:bg-[rgba(0,255,196,0.15)] transition-all"
+          >
+            #{tag} ({tagCounts[tag]})
+          </button>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<script>
+  import { selectedTagStore } from '../lib/store/filterStore';
+
+  function initTagFilter() {
+    const tagButtons = document.querySelectorAll('.tag-button');
+    const clearButton = document.getElementById('clearTagButton');
+
+    function updateButtonStates(selectedTag: string | null) {
+      tagButtons.forEach(button => {
+        const buttonTag = button.getAttribute('data-tag');
+        const isSelected = buttonTag === selectedTag;
+        
+        button.classList.toggle('bg-cyber-primary', isSelected);
+        button.classList.toggle('text-cyber-dark', isSelected);
+        button.classList.toggle('bg-[rgba(0,255,196,0.1)]', !isSelected);
+      });
+
+      if (clearButton) {
+        clearButton.classList.toggle('hidden', !selectedTag);
+      }
+    }
+
+    tagButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tag = button.getAttribute('data-tag');
+        const currentTag = selectedTagStore.get();
+        selectedTagStore.set(currentTag === tag ? null : tag);
+      });
+    });
+
+    clearButton?.addEventListener('click', () => {
+      selectedTagStore.set(null);
+    });
+
+    selectedTagStore.subscribe(updateButtonStates);
+    updateButtonStates(selectedTagStore.get());
+  }
+
+  initTagFilter();
+  document.addEventListener('astro:page-load', initTagFilter);
+</script>

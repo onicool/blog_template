@@ -1,0 +1,17 @@
+---
+title: "Rustの非同期プログラミング"
+description: "Rustにおける非同期プログラミングの基礎から応用まで、実践的な例を交えて解説します。"
+pubDate: 2024-01-30
+tags: ["programming", "rust", "async"]
+---
+
+Rustの非同期プログラミングは、高性能な並行処理を可能にします。
+
+## async/await
+
+```rust
+async fn fetch_data() -> Result<String, Error> {
+    let response = client.get("https://api.example.com").await?;
+    Ok(response.text().await?)
+}
+```

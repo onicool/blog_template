@@ -1,0 +1,117 @@
+---
+import { siteConfig } from '../config/site';
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getEntry } from 'astro:content';
+import '../styles/card.css';
+
+const recentPosts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const aboutData = await getEntry('about', 'profile');
+const { profile } = aboutData.data;
+---
+
+<Layout title={siteConfig.pages.home.title}>
+  <!-- ヒーローセクション -->
+  <div class="cyber-hero mb-16 text-center py-20 relative overflow-hidden">
+    <div class="relative z-10">
+      <h1 class="font-cyber text-5xl text-cyber-primary mb-6">
+        メモログ
+      </h1>
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto px-4 mb-8">
+        トレードとプログラミングなどの個人的メモ。<br>
+        当面の目標はHFTbotの作成です。
+      </p>
+      <a
+        href="/blog"
+        class="inline-block bg-[rgba(0,255,196,0.1)] border-2 border-cyber-primary text-cyber-primary hover:bg-cyber-primary hover:text-cyber-dark transition-colors px-8 py-3 rounded-lg font-cyber"
+      >
+        記事一覧を見る
+      </a>
+    </div>
+  </div>
+
+  <!-- メインコンテンツ -->
+  <div class="space-y-16 px-4 md:px-0">
+    <!-- 最新記事セクション -->
+    <section>
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="font-cyber text-2xl text-cyber-secondary">最新の記事</h2>
+        <a
+          href="/blog"
+          class="text-cyber-primary hover:text-cyber-secondary transition-colors font-cyber"
+        >
+          すべての記事を見る →
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {recentPosts.map(post => (
+          <a href={`/blog/${post.slug}`} class="cyber-card group">
+            <article>
+              <h3 class="font-cyber text-lg text-cyber-primary group-hover:text-cyber-secondary transition-colors mb-3 line-clamp-2">
+                {post.data.title}
+              </h3>
+              <p class="text-gray-300 text-sm mb-4 line-clamp-2">
+                {post.data.description}
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.slice(0, 3).map(tag => (
+                  <span class="text-xs px-2 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary group-hover:bg-[rgba(0,255,196,0.15)] transition-all">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </article>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- プロフィールセクション -->
+    <section class="text-center">
+      <h2 class="font-cyber text-2xl text-cyber-secondary mb-8">Profile</h2>
+      <a href="/about" class="cyber-card group block">
+        <div>
+          <div class="flex items-center justify-center gap-6 mb-4">
+            <div class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-cyber-primary group-hover:border-cyber-secondary transition-colors">
+              <img
+                src={profile.image}
+                alt={profile.name}
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div class="text-left">
+              <div class="font-cyber text-cyber-primary group-hover:text-cyber-secondary transition-colors">
+                {profile.handle}
+              </div>
+              <div class="text-sm text-gray-400">View Profile →</div>
+            </div>
+          </div>
+
+          <p class="text-gray-300 max-w-2xl mx-auto line-clamp-2">
+            {profile.description}
+          </p>
+        </div>
+      </a>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .cyber-hero {
+    background: rgba(13, 17, 23, 0.7);
+    border-y: 1px solid rgba(0, 255, 196, 0.1);
+  }
+
+  .cyber-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 30% 50%, rgba(0, 255, 196, 0.1), transparent 50%),
+      radial-gradient(circle at 70% 50%, rgba(0, 184, 255, 0.1), transparent 50%);
+    pointer-events: none;
+  }
+</style>

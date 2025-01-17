@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BlogCard from '../components/BlogCard.astro';
+import Search from '../components/Search.astro';
+import TagsFilter from '../components/TagsFilter.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// クライアントサイドでのみ実行されるスクリプトで取得するため、ここでは空文字を渡す
+const selectedTag = '';
+---
+
+<Layout title="CyberBlog - Programming & Trading">
+  <div class="mb-16 text-center py-20 bg-cyber-light border-y border-cyber-primary">
+    <h1 class="font-cyber text-5xl text-cyber-primary mb-4">
+      <span class="text-cyber-secondary">&lt;</span>
+      メモログ
+      <span class="text-cyber-secondary">/&gt;</span>
+    </h1>
+    <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+      プログラミングとトレードの知見を共有するテックブログ。
+      日々の発見や学びをアウトプットしています。
+    </p>
+  </div>
+
+  <div class="grid grid-cols-[1fr_300px] gap-8">
+    <main>
+      <Search />
+
+      <div id="posts-container" class="space-y-6 mt-8">
+        {posts.map(post => (
+          <BlogCard
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            updatedDate={post.data.updatedDate}
+            tags={post.data.tags}
+            url={`/blog/${post.slug}`}
+          />
+        ))}
+      </div>
+    </main>
+
+    <aside class="space-y-8">
+      <div class="bg-cyber-light p-6 rounded-lg border border-cyber-primary">
+        <TagsFilter selectedTag={selectedTag} />
+      </div>
+    </aside>
+  </div>
+</Layout>
+
+<script>
+  function handleTagFilter() {
+    const tag = sessionStorage.getItem('selectedTag');
+    
+    if (tag) {
+      const posts = document.querySelectorAll('#posts-container .block.group');
+      
+      posts.forEach(post => {
+        const postTags = Array.from(post.querySelectorAll('[data-post-tag]'))
+          .map(tag => tag.getAttribute('data-post-tag'));
+        
+        if (!postTags.includes(tag)) {
+          post.style.display = 'none';
+        } else {
+          post.style.display = 'block';
+        }
+      });
+    } else {
+      // タグが選択されていない場合は全ての記事を表示
+      const posts = document.querySelectorAll('#posts-container .block.group');
+      posts.forEach(post => {
+        post.style.display = 'block';
+      });
+    }
+  }
+
+  // 初期化時とページ遷移時に実行
+  handleTagFilter();
+  document.addEventListener('astro:page-load', handleTagFilter);
+</script>

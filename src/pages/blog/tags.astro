@@ -1,0 +1,70 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+
+// タグのカテゴリー定義
+const tagCategories = {
+  "Programming": ["typescript", "javascript", "react", "nextjs", "rust", "async", "docker", "infrastructure"],
+  "Trading": ["trading", "technical-analysis", "risk-management", "psychology", "market-analysis"],
+  "Blockchain": ["crypto", "defi", "blockchain", "investment"]
+};
+
+// タグごとの記事数を計算
+const tagCounts = posts.reduce((acc, post) => {
+  post.data.tags.forEach(tag => {
+    acc[tag] = (acc[tag] || 0) + 1;
+  });
+  return acc;
+}, {} as Record<string, number>);
+
+// カテゴリーごとにタグを整理し、使用頻度でソート
+const categorizedTags = Object.entries(tagCategories).map(([category, categoryTags]) => ({
+  category,
+  tags: categoryTags
+    .filter(tag => tagCounts[tag])
+    .sort((a, b) => (tagCounts[b] || 0) - (tagCounts[a] || 0))
+}));
+---
+
+<Layout title="タグ一覧">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="font-cyber text-4xl text-cyber-primary mb-8">タグ一覧</h1>
+
+    <div class="space-y-12">
+      {categorizedTags.map(({ category, tags }) => (
+        <section class="bg-cyber-light p-6 rounded-lg border border-cyber-primary">
+          <h2 class="font-cyber text-2xl text-cyber-secondary mb-6">{category}</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tags.map(tag => (
+              <a
+                href={`/blog/tag/${tag}`}
+                class="group bg-cyber-dark p-4 rounded-lg border border-cyber-primary hover:border-cyber-secondary transition-colors"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="font-cyber text-cyber-primary group-hover:text-cyber-secondary transition-colors">
+                    #{tag}
+                  </span>
+                  <span class="text-gray-400 text-sm">
+                    {tagCounts[tag]}件の記事
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <div class="mt-12 pt-8 border-t border-cyber-primary">
+      <a
+        href="/blog"
+        class="inline-flex items-center font-cyber text-cyber-primary hover:text-cyber-secondary transition-colors"
+      >
+        <span class="mr-2">←</span>
+        記事一覧に戻る
+      </a>
+    </div>
+  </div>
+</Layout>

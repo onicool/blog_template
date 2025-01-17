@@ -1,0 +1,157 @@
+---
+interface Props {
+  headings: {
+    depth: number;
+    slug: string;
+    text: string;
+  }[];
+}
+
+const { headings } = Astro.props;
+
+// 目次に表示する見出しレベルをh2とh3に制限
+const toc = headings.filter(heading => heading.depth > 1 && heading.depth < 4);
+---
+
+{toc.length > 0 && (
+  <nav class="toc bg-cyber-light p-6 rounded-lg border border-cyber-primary mb-8 relative">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="font-cyber text-xl text-cyber-secondary">目次</h2>
+      <button
+        class="text-cyber-primary hover:text-cyber-secondary transition-colors text-sm"
+        id="topButton"
+      >
+        ▲ TOP
+      </button>
+    </div>
+    <div class="toc-container overflow-y-auto max-h-[60vh] pr-2">
+      <ul class="space-y-2">
+        {toc.map(heading => (
+          <li class={`${heading.depth === 3 ? 'ml-4' : ''}`}>
+            <a
+              href={`#${heading.slug}`}
+              class="text-gray-300 hover:text-cyber-primary transition-colors relative flex items-center pl-6"
+              data-toc-link
+            >
+              <span class="indicator absolute left-0 w-2 h-2 rounded-full bg-cyber-primary opacity-0 transition-all duration-300"></span>
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+)}
+
+<script>
+  function updateActiveHeading() {
+    const headings = Array.from(document.querySelectorAll('h2, h3'));
+    const tocLinks = document.querySelectorAll('[data-toc-link]');
+    const tocContainer = document.querySelector('.toc-container');
+    
+    // 現在のスクロール位置を取得
+    const scrollPosition = window.scrollY;
+    
+    // 各見出しの位置を確認し、現在のセクションを特定
+    let currentSection = null;
+    let currentIndex = -1;
+    
+    for (let i = 0; i < headings.length; i++) {
+      const heading = headings[i];
+      const nextHeading = headings[i + 1];
+      
+      // 見出しの位置を取得（上部に余白を考慮）
+      const offset = 100;
+      const sectionTop = heading.offsetTop - offset;
+      const sectionBottom = nextHeading 
+        ? nextHeading.offsetTop - offset 
+        : document.documentElement.scrollHeight;
+      
+      // スクロール位置が現在のセクションの範囲内にあるか確認
+      if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+        currentSection = heading;
+        currentIndex = i;
+        break;
+      }
+    }
+
+    // アクティブな目次リンクを更新
+    tocLinks.forEach((link, index) => {
+      const href = link.getAttribute('href');
+      const indicator = link.querySelector('.indicator');
+      
+      if (currentSection && `#${currentSection.id}` === href) {
+        indicator.style.opacity = '1';
+        link.classList.add('text-cyber-primary');
+        
+        // アクティブな項目が見えるようにスクロール
+        if (tocContainer && index === currentIndex) {
+          const linkTop = link.offsetTop;
+          const containerHeight = tocContainer.clientHeight;
+          const scrollOffset = linkTop - (containerHeight / 2);
+          
+          tocContainer.scrollTo({
+            top: scrollOffset,
+            behavior: 'smooth'
+          });
+        }
+      } else {
+        indicator.style.opacity = '0';
+        link.classList.remove('text-cyber-primary');
+      }
+    });
+  }
+
+  function initTableOfContents() {
+    // スクロールイベントの監視
+    window.addEventListener('scroll', updateActiveHeading);
+
+    // TOPボタンの機能を追加
+    const topButton = document.getElementById('topButton');
+    if (topButton) {
+      topButton.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    }
+
+    // 初期状態を設定
+    updateActiveHeading();
+  }
+
+  // 初期化とページ遷移時の再初期化
+  initTableOfContents();
+  document.addEventListener('astro:page-load', initTableOfContents);
+</script>
+
+<style>
+  .toc {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .toc-container {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.cyber.primary') theme('colors.cyber.dark');
+  }
+
+  .toc-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .toc-container::-webkit-scrollbar-track {
+    background: theme('colors.cyber.dark');
+  }
+
+  .toc-container::-webkit-scrollbar-thumb {
+    background-color: theme('colors.cyber.primary');
+    border-radius: 3px;
+  }
+
+  .indicator {
+    transform: scale(0);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+</style>

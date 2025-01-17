@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+
+interface Props {
+  currentPost: CollectionEntry<'blog'>;
+  maxPosts?: number;
+}
+
+const { currentPost, maxPosts = 3 } = Astro.props;
+
+// 全ての記事を取得
+const allPosts = await getCollection('blog');
+
+// 関連記事を計算する関数
+function getRelatedPosts(
+  currentPost: CollectionEntry<'blog'>,
+  allPosts: CollectionEntry<'blog'>[],
+  maxPosts: number
+) {
+  // 現在の記事を除外
+  const otherPosts = allPosts.filter(post => post.id !== currentPost.id);
+  
+  // 各記事のスコアを計算
+  const scoredPosts = otherPosts.map(post => {
+    // 共通するタグの数を計算
+    const commonTags = post.data.tags.filter(tag => 
+      currentPost.data.tags.includes(tag)
+    );
+    
+    return {
+      post,
+      score: commonTags.length,
+      commonTags
+    };
+  });
+
+  // スコアでソートし、関連度の高い記事を選択
+  return scoredPosts
+    .filter(({ score }) => score > 0) // 共通のタグがある記事のみ
+    .sort((a, b) => {
+      // スコアが同じ場合は新しい記事を優先
+      if (b.score === a.score) {
+        return b.post.data.pubDate.getTime() - a.post.data.pubDate.getTime();
+      }
+      return b.score - a.score;
+    })
+    .slice(0, maxPosts)
+    .map(({ post }) => post);
+}
+
+const relatedPosts = getRelatedPosts(currentPost, allPosts, maxPosts);
+---
+
+{relatedPosts.length > 0 && (
+  <section class="mt-16 pt-8 border-t border-cyber-primary">
+    <h2 class="font-cyber text-2xl text-cyber-secondary mb-8">関連記事</h2>
+    <div class="grid gap-8">
+      {relatedPosts.map(post => (
+        <BlogCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          updatedDate={post.data.updatedDate}
+          tags={post.data.tags}
+          url={`/blog/${post.slug}`}
+        />
+      ))}
+    </div>
+  </section>
+)}

@@ -1,0 +1,52 @@
+---
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+function getBreadcrumbItems(path: string) {
+  const items = [];
+  const parts = path.split('/').filter(Boolean);
+
+  // ホームは常に表示
+  items.push({ label: 'Home', path: '/' });
+
+  if (parts.length > 0) {
+    let currentPath = '';
+    parts.forEach((part) => {
+      currentPath += `/${part}`;
+      items.push({
+        label: part.charAt(0).toUpperCase() + part.slice(1),
+        path: currentPath
+      });
+    });
+  }
+
+  return items;
+}
+
+const items = getBreadcrumbItems(currentPath);
+---
+
+<nav class="mb-8 font-cyber text-sm">
+  <ol class="flex items-center space-x-2">
+    {items.map((item, index) => (
+      <>
+        {index > 0 && <span class="text-cyber-secondary">/</span>}
+        <li>
+          {index === items.length - 1 ? (
+            <span class="text-cyber-primary">{item.label}</span>
+          ) : (
+            <a
+              href={item.path}
+              class="text-gray-400 hover:text-cyber-secondary transition-colors"
+            >
+              {item.label}
+            </a>
+          )}
+        </li>
+      </>
+    ))}
+  </ol>
+</nav>

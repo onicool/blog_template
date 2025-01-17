@@ -1,0 +1,53 @@
+---
+interface Props {
+    tags: string[];
+    currentTag?: string;
+}
+
+const { tags, currentTag } = Astro.props;
+
+// タグのカテゴリー定義
+const tagCategories = {
+    "Programming": ["typescript", "javascript", "react", "nextjs", "rust", "async", "docker", "infrastructure"],
+    "Trading": ["trading", "technical-analysis", "risk-management", "psychology", "market-analysis"],
+    "Blockchain": ["crypto", "defi", "blockchain", "investment"]
+};
+
+// タグをカテゴリーに分類
+const categorizedTags = Object.entries(tagCategories).map(([category, categoryTags]) => ({
+    category,
+    tags: tags.filter(tag => categoryTags.includes(tag))
+}));
+---
+
+<div>
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="font-cyber text-xl text-cyber-secondary">タグ</h2>
+        <a
+            href="/blog/tag"
+            class="text-sm text-cyber-primary hover:text-cyber-secondary transition-colors"
+        >
+            すべて表示 →
+        </a>
+    </div>
+
+    {categorizedTags.map(({ category, tags }) => tags.length > 0 && (
+        <div class="mb-4">
+            <h3 class="font-cyber text-cyber-secondary text-sm mb-2">{category}</h3>
+            <div class="flex flex-wrap gap-2">
+                {tags.map(tag => (
+                    <a
+                        href={`/blog/tag/${tag}`}
+                        class={`px-3 py-1 rounded-full text-sm transition-colors ${
+                            currentTag === tag
+                                ? 'bg-cyber-primary text-cyber-dark'
+                                : 'bg-cyber-dark border border-cyber-primary text-cyber-primary hover:border-cyber-secondary hover:text-cyber-secondary'
+                        }`}
+                    >
+                        #{tag}
+                    </a>
+                ))}
+            </div>
+        </div>
+    ))}
+</div>

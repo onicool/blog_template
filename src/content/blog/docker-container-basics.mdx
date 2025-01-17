@@ -1,0 +1,20 @@
+---
+title: "Dockerコンテナ入門"
+description: "Dockerの基本概念からコンテナの作成、運用まで、実践的なガイドを提供します。"
+pubDate: 2024-02-20
+updatedDate: 2024-03-20
+tags: ["programming", "docker", "infrastructure"]
+---
+
+Dockerは、アプリケーションの開発・デプロイを効率化するコンテナ技術です。
+
+## Dockerfileの基本
+
+```dockerfile
+FROM node:18
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "start"]
+```

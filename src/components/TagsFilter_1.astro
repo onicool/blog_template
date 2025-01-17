@@ -1,0 +1,136 @@
+---
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const allTags = [...new Set(posts.map(post => post.data.tags).flat())].sort();
+
+// タグのカテゴリー定義
+const tagCategories = {
+  "Programming": ["typescript", "javascript", "react", "nextjs", "rust", "async", "docker", "infrastructure"],
+  "Trading": ["trading", "technical-analysis", "risk-management", "psychology", "market-analysis"],
+  "Blockchain": ["crypto", "defi", "blockchain", "investment"]
+};
+
+// タグをカテゴリーに分類
+const categorizedTags = Object.entries(tagCategories).map(([category, categoryTags]) => ({
+  category,
+  tags: allTags.filter(tag => categoryTags.includes(tag))
+}));
+
+const { selectedTag } = Astro.props;
+---
+
+<div>
+  {categorizedTags.map(({ category, tags }) => tags.length > 0 && (
+    <div class="mb-4">
+      <h3 class="font-cyber text-cyber-secondary text-sm mb-2">{category}</h3>
+      <div class="flex flex-wrap gap-2">
+        {tags.map(tag => (
+          <button
+            data-tag={tag}
+            class={`px-3 py-1 rounded-full text-sm transition-colors ${
+              selectedTag === tag
+                ? 'bg-cyber-primary text-cyber-dark hover:bg-cyber-secondary'
+                : 'bg-cyber-dark border border-cyber-primary text-cyber-primary hover:border-cyber-secondary hover:text-cyber-secondary'
+            }`}
+          >
+            #{tag}
+          </button>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<script>
+  function initTagFilter() {
+    const tagButtons = document.querySelectorAll('[data-tag]');
+    if (!tagButtons.length) return;
+
+    let activeTag = sessionStorage.getItem('selectedTag');
+    const articleLinks = document.querySelectorAll('a.block.group');
+
+    function filterPosts(tag) {
+      let visibleCount = 0;
+
+      // 2ページ目以降の場合は、タグを保存してから遷移
+      if (tag && window.location.pathname !== '/blog') {
+        sessionStorage.setItem('selectedTag', tag);
+        window.location.href = '/blog';
+        return;
+      }
+
+      articleLinks.forEach(link => {
+        if (!tag) {
+          link.style.display = 'block';
+          visibleCount++;
+          return;
+        }
+
+        const article = link.querySelector('article');
+        const postTags = Array.from(article.querySelectorAll('[data-post-tag]'))
+          .map(el => el.getAttribute('data-post-tag'));
+        
+        const matches = postTags.includes(tag);
+        link.style.display = matches ? 'block' : 'none';
+        if (matches) visibleCount++;
+      });
+
+      // ページネーションの更新
+      const pagination = document.querySelector('nav.pagination');
+      if (pagination) {
+        pagination.style.display = visibleCount >= 10 ? 'flex' : 'none';
+      }
+    }
+
+    function updateTagButtons(selectedTag) {
+      tagButtons.forEach(btn => {
+        const btnTag = btn.getAttribute('data-tag');
+        if (btnTag === selectedTag) {
+          btn.classList.add('bg-cyber-primary', 'text-cyber-dark');
+          btn.classList.remove('bg-cyber-dark', 'border-cyber-primary', 'text-cyber-primary');
+        } else {
+          btn.classList.remove('bg-cyber-primary', 'text-cyber-dark');
+          btn.classList.add('bg-cyber-dark', 'border-cyber-primary', 'text-cyber-primary');
+        }
+      });
+    }
+
+    // 初期状態の設定
+    if (activeTag) {
+      updateTagButtons(activeTag);
+      filterPosts(activeTag);
+    }
+
+    // タグボタンのクリックイベント
+    tagButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tag = button.getAttribute('data-tag');
+        if (!tag) return;
+
+        // 検索をリセット
+        const searchInput = document.querySelector('#search');
+        const searchInfo = document.querySelector('#searchInfo');
+        if (searchInput) searchInput.value = '';
+        if (searchInfo) searchInfo.classList.add('hidden');
+        sessionStorage.removeItem('searchKeyword');
+
+        if (activeTag === tag) {
+          // 同じタグをクリックした場合は選択解除
+          activeTag = null;
+          sessionStorage.removeItem('selectedTag');
+          updateTagButtons(null);
+        } else {
+          // 新しいタグを選択
+          activeTag = tag;
+        }
+
+        filterPosts(activeTag);
+      });
+    });
+  }
+
+  // 初期化
+  initTagFilter();
+  document.addEventListener('astro:page-load', initTagFilter);
+</script>

@@ -1,68 +1,32 @@
 ---
+// pages/blog/search.astro
 import Layout from '../../layouts/Layout.astro';
 import BlogCard from '../../components/BlogCard.astro';
-import Search from '../../components/Search.astro';
-import TagCloud from '../../components/TagCloud.astro';
+import SearchComponent from '../../components/Search.astro'; // 名前を変更
 import { getCollection } from 'astro:content';
 import { searchPosts } from '../../lib/utils/search';
 
 const query = Astro.url.searchParams.get('q') || '';
 const allPosts = await getCollection('blog');
-const tags = [...new Set(allPosts.flatMap(post => post.data.tags))];
-const searchResults = query ? searchPosts(allPosts, query) : [];
+const searchResults = query ? await searchPosts(allPosts, query) : [];
 ---
 
 <Layout title={`検索結果: ${query}`}>
-    <div class="grid lg:grid-cols-[1fr_300px] gap-8">
-        <main>
-            {query && (
-                <div class="mb-8">
-                    <h1 class="font-cyber text-3xl text-cyber-primary mb-4">
-                        検索結果
-                    </h1>
-                    <p class="text-gray-300">
-                        "{query}" の検索結果: {searchResults.length}件
-                    </p>
-                </div>
-            )}
-
-            <div class="grid gap-6">
-                {searchResults.map(post => (
-                    <BlogCard
-                        title={post.data.title}
-                        description={post.data.description}
-                        pubDate={post.data.pubDate}
-                        updatedDate={post.data.updatedDate}
-                        tags={post.data.tags}
-                        url={`/blog/${post.slug}`}
-                    />
-                ))}
-            </div>
-
-            {query && searchResults.length === 0 && (
-                <div class="text-center py-12">
-                    <p class="text-gray-400">検索結果が見つかりませんでした。</p>
-                </div>
-            )}
-
-            <div class="mt-12 pt-8 border-t border-cyber-primary">
-                <a
-                    href="/blog"
-                    class="inline-flex items-center font-cyber text-cyber-primary hover:text-cyber-secondary transition-colors"
-                >
-                    <span class="mr-2">←</span>
-                    記事一覧に戻る
-                </a>
-            </div>
-        </main>
-
-        <aside class="space-y-8">
-            <div class="bg-cyber-light p-6 rounded-lg border border-cyber-primary space-y-6">
-                <Search initialQuery={query} />
-                <div class="pt-6 border-t border-cyber-primary">
-                    <TagCloud tags={tags} />
-                </div>
-            </div>
-        </aside>
+  <main>
+    <SearchComponent initialQuery={query} /> {/* コンポーネント名を変更 */}
+    
+    {query && (
+      <p class="my-4">「{query}」の検索結果: {searchResults.length}件</p>
+    )}
+    
+    <div class="grid gap-4">
+      {searchResults.map(post => (
+        <BlogCard post={post} />
+      ))}
     </div>
+    
+    {query && searchResults.length === 0 && (
+      <p>検索結果が見つかりませんでした。</p>
+    )}
+  </main>
 </Layout>

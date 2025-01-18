@@ -1,21 +1,43 @@
 // lib/utils/search.ts
 import type { CollectionEntry } from 'astro:content';
 
-export function searchPosts(posts: CollectionEntry<'blog'>[], query: string): CollectionEntry<'blog'>[] {
+export async function searchPosts(posts: CollectionEntry<'blog'>[], query: string): Promise<CollectionEntry<'blog'>[]> {
   const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
   
-  return posts.filter(post => {
-    const searchableContent = [
-      post.data.title,
-      post.data.description,
-      ...post.data.tags,
-    ].map(content => (content || '').toLowerCase());
+  const results = [];
+  
+  for (const post of posts) {
+    try {
+      // デバッグ出力を追加
+      console.log('Searching post:', post.slug);
+      console.log('Title:', post.data.title);
+      console.log('Content:', post.body); // 実際の記事本文
+      console.log('Search terms:', searchTerms);
+      
+      const searchableContent = [
+        post.data.title.toLowerCase(),
+        post.data.description?.toLowerCase() || '',
+        ...post.data.tags.map(tag => tag.toLowerCase()),
+        post.body.toLowerCase() // markdown形式の記事本文
+      ];
+      
+      // 各検索語にマッチするかどうかも出力
+      searchTerms.forEach(term => {
+        console.log(`Checking term "${term}":`, 
+          searchableContent.some(content => content.includes(term)));
+      });
 
-    return searchTerms.every(term =>
-      searchableContent.some(content => content.includes(term))
-    );
-  }).sort((a, b) => {
-    // 最新の投稿を優先
-    return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
-  });
+      const matches = searchTerms.every(term =>
+        searchableContent.some(content => content.includes(term))
+      );
+      
+      if (matches) {
+        results.push(post);
+      }
+    } catch (e) {
+      console.error(`Error searching post ${post.slug}:`, e);
+    }
+  }
+  
+  return results.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }

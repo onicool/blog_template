@@ -2,7 +2,7 @@
 import { siteConfig } from '../../config/site';
 import Layout from '../../layouts/Layout.astro';
 import BlogCard from '../../components/BlogCard.astro';
-import Search from '../../components/Search.astro';
+// import Search from '../../components/Search.astro';
 import TagCloud from '../../components/TagCloud.astro';
 import { getCollection } from 'astro:content';
 
@@ -32,8 +32,8 @@ const tags = [...new Set(posts.flatMap(post => post.data.tags))];
 
         <aside class="space-y-8">
             <div class="bg-cyber-light p-6 rounded-lg border border-cyber-primary space-y-6">
-                <Search />
-                <div class="pt-6 border-t border-cyber-primary">
+                <!-- <Search /> -->
+                <!-- <div class="pt-6 border-t border-cyber-primary"> -->
                     <TagCloud tags={tags} />
                 </div>
             </div>

@@ -1,0 +1,11 @@
+---
+const { name, value, description } = Astro.props;
+---
+
+<div class="status-container">
+  <div class="status-name">{name}</div>
+  <div class="status-desc">{description}</div>
+  <div class="status-bar-container">
+    <div class="status-bar" style={`width: ${value}%`}></div>
+  </div>
+</div>

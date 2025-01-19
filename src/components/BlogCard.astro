@@ -38,10 +38,7 @@ import '../styles/card.css';
 
       <div class="flex gap-2 flex-wrap">
         {tags.map(tag => (
-          <span
-            class="text-xs md:text-sm px-3 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary group-hover:bg-[rgba(0,255,196,0.15)] transition-all"
-            data-post-tag={tag}
-          >
+          <span data-post-tag={tag}>
             #{tag}
           </span>
         ))}

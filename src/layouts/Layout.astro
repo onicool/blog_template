@@ -176,4 +176,12 @@ const isActive = (path: string) => {
   ::view-transition-new(root) {
     animation-duration: 0.2s;
   }
+
+  span[data-post-tag] {
+    @apply text-xs md:text-sm px-3 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary transition-all;
+  }
+
+  span[data-post-tag]:hover {
+    background-color: rgba(0, 255, 196, 0.15);
+  }
 </style>

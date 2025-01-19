@@ -8,7 +8,7 @@ export const siteConfig = {
     },
     about: {
       title: 'About',
-      description: 'About CyberBlog'
+      description: 'About Author'
     },
     blog: {
       title: 'Blog',

@@ -91,7 +91,7 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
         sessionStorage.setItem('selectedTag', tag);
         
         // ブログページにハッシュ付きで遷移
-        window.location.href = `/blog#${tag}`;
+        window.location.href = `/blog/tag/#${tag}`;
       });
     });
   }

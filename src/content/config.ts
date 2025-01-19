@@ -20,16 +20,6 @@ const about = defineCollection({
       image: z.string(),
       description: z.string(),
     }),
-    stats: z.object({
-      level: z.number(),
-      exp: z.number(),
-      nextExp: z.number(),
-      attributes: z.array(z.object({
-        name: z.string(),
-        value: z.number(),
-        description: z.string(),
-      })),
-    }),
     skills: z.array(z.object({
       category: z.string(),
       items: z.array(z.string()),

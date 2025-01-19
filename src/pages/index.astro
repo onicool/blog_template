@@ -38,7 +38,7 @@ const { profile } = aboutData.data;
     <!-- 最新記事セクション -->
     <section>
       <div class="flex justify-between items-center mb-8">
-        <h2 class="font-cyber text-2xl text-cyber-secondary">最新の記事</h2>
+        <h2 class="heading">最新の記事</h2>
         <a
           href="/blog"
           class="text-cyber-primary hover:text-cyber-secondary transition-colors font-cyber"
@@ -48,7 +48,7 @@ const { profile } = aboutData.data;
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         {recentPosts.map(post => (
-          <a href={`/blog/${post.slug}`} class="cyber-card group">
+          <a href={`/blog/${post.slug}`} class="card group">
             <article>
               <h3 class="font-cyber text-lg text-cyber-primary group-hover:text-cyber-secondary transition-colors mb-3 line-clamp-2">
                 {post.data.title}
@@ -70,9 +70,9 @@ const { profile } = aboutData.data;
     </section>
 
     <!-- プロフィールセクション -->
-    <section class="text-center">
-      <h2 class="font-cyber text-2xl text-cyber-secondary mb-8">Profile</h2>
-      <a href="/about" class="cyber-card group block">
+    <section class="">
+      <h2 class="heading">Profile</h2>
+      <a href="/about" class="card group block text-center">
         <div>
           <div class="flex items-center justify-center gap-6 mb-4">
             <div class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-cyber-primary group-hover:border-cyber-secondary transition-colors">

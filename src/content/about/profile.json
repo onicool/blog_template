@@ -2,22 +2,10 @@
     "profile": {
       "name": "Your Name",
       "handle": "@FX_suruman",
-      "image": "/img/admin.jpg",
-      "description": "トレードは裁量ばかりでしたがBotも作っていきたいと思ってメモのためにブログを立ち上げました。HFTやりたい。プログラミングの技術も磨いていきたい。ゲームは好き。全てにおいて初心者です。本業は全く違う仕事です。"
+      "image": "/img/admin.svg",
+      "description": "裁量6年生、bot1年生、プログラミング永遠の1年生（10浪くらい）です。トレードは裁量ばかりでしたがBotも作っていきたいと思ってメモのためにブログを立ち上げました。HFTやりたい。プログラミングの技術も磨いていきたい。ゲームは好き。全てにおいて初心者です。本業は全く違う仕事です。"
     },
-    "stats": {
-      "level": 3,
-      "exp": 75,
-      "nextExp": 100,
-      "attributes": [
-        { "name": "STR", "value": 65, "description": "ごり押し力技" },
-        { "name": "INT", "value": 45, "description": "やる前に考える指数" },
-        { "name": "DEX", "value": 76, "description": "タイピング能力" },
-        { "name": "VIT", "value": 43, "description": "健康" },
-        { "name": "AGI", "value": 32, "description": "変わり身の早さ" },
-        { "name": "LUK", "value": 99, "description": "幸運は心構え" }
-      ]
-    },
+
     "skills": [
       {
         "category": "Programming",

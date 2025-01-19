@@ -3,6 +3,7 @@ import { ViewTransitions } from 'astro:transitions';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import Footer from '../components/Footer.astro';
 import SEO from '../components/SEO.astro';
+import '../styles/global.css';
 
 interface Props {
   title: string;
@@ -107,81 +108,3 @@ const isActive = (path: string) => {
   </body>
 </html>
 
-<style is:global>
-  :root {
-    color-scheme: dark;
-  }
-  
-  .cyber-gradient {
-    background: linear-gradient(to bottom,
-      rgba(13, 17, 23, 0.95),
-      rgba(13, 17, 23, 0.8)
-    );
-    flex-grow: 1;
-    position: relative;
-  }
-
-  .cyber-gradient::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(0, 255, 196, 0.2),
-      transparent
-    );
-  }
-
-  .cyber-logo {
-    position: relative;
-    text-shadow: 0 0 10px rgba(0, 255, 196, 0.5);
-  }
-
-  .cyber-link {
-    padding-bottom: 2px;
-  }
-
-  .cyber-link::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(0, 255, 196, 0.8),
-      transparent
-    );
-    transition: width 0.3s ease;
-  }
-
-  .cyber-link:hover::after,
-  .cyber-link.active::after {
-    width: 100%;
-  }
-
-  ::selection {
-    background: rgba(0, 255, 196, 0.3);
-    color: #fff;
-  }
-
-  /* トランジションのアニメーション設定 */
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 0.2s;
-  }
-
-  span[data-post-tag] {
-    @apply text-xs md:text-sm px-3 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary transition-all;
-  }
-
-  span[data-post-tag]:hover {
-    background-color: rgba(0, 255, 196, 0.15);
-  }
-</style>

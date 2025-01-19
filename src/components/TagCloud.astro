@@ -1,23 +1,18 @@
 ---
+import { categorizeTags, getTagCounts } from '../utils/tagUtils';
 interface Props {
     tags: string[];
     currentTag?: string;
+    showCount?: boolean;
 }
 
-const { tags, currentTag } = Astro.props;
+const { tags, currentTag, showCount = false } = Astro.props;
 
-// タグのカテゴリー定義
-const tagCategories = {
-    "Programming": ["typescript", "javascript", "react", "nextjs", "rust", "async", "docker", "infrastructure"],
-    "Trading": ["trading", "technical-analysis", "risk-management", "psychology", "market-analysis"],
-    "Blockchain": ["crypto", "defi", "blockchain", "investment"]
-};
+// もし showCount が true の場合、タグの出現回数を計算
+const tagCounts = showCount ? getTagCounts([{ data: { tags } }]) : undefined;
 
-// タグをカテゴリーに分類
-const categorizedTags = Object.entries(tagCategories).map(([category, categoryTags]) => ({
-    category,
-    tags: tags.filter(tag => categoryTags.includes(tag))
-}));
+// categorizeTags 関数を使用してタグを分類
+const categorizedTags = categorizeTags(tags, tagCounts);
 ---
 
 <div>
@@ -31,7 +26,7 @@ const categorizedTags = Object.entries(tagCategories).map(([category, categoryTa
         </a>
     </div>
 
-    {categorizedTags.map(({ category, tags }) => tags.length > 0 && (
+    {categorizedTags.map(({ category, tags }) => (
         <div class="mb-4">
             <h3 class="font-cyber text-cyber-secondary text-sm mb-2">{category}</h3>
             <div class="flex flex-wrap gap-2">

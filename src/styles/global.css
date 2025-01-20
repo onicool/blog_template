@@ -1,146 +1,96 @@
 :root {
   color-scheme: dark;
-  --box-light: rgba(0, 255, 196, 0.8);
-  --box-dark: rgba(0, 255, 196, 0.2);
-
 }
-
-/* 色 */
-
 
 /* 基本のボックススタイル */
 .box {
-  background: rgba(17, 21, 28, 0.8);
-  border: 1px solid rgba(0, 255, 196, 0.2);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  transition: all 0.3s ease;
+  @apply bg-cyber-dark/80 border border-cyber-primary/20 rounded-lg p-4 transition-all duration-300;
 }
 
 .thin_box {
-  background: rgba(17, 21, 28, 0.8);
-  border: 1px solid rgba(0, 255, 196, 0.2);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  transition: all 0.3s ease;
+  @apply bg-cyber-dark/80 border border-cyber-primary/20 rounded-lg p-4 transition-all duration-300;
 }
 
 .thin_box:hover {
-  border-color: rgba(0, 255, 196, 0.4);
-  box-shadow: 0 0 15px rgba(0, 255, 196, 0.1);
+  @apply border-cyber-primary/40;
+  box-shadow: 0 0 15px theme('colors.cyber.primary' / 10%);
 }
 
 /* カード型ボックス */
 .card {
-  background: rgba(13, 17, 23, 0.7);
-  border: 1px solid rgba(0, 255, 196, 0.1);
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  @apply bg-cyber-dark/70 border border-cyber-primary/10 rounded-lg p-6 transition-all duration-300 relative overflow-hidden;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(0, 255, 196, 0.1);
-  border-color: rgba(0, 255, 196, 0.3);
-  background: rgba(13, 17, 23, 0.85);
+  @apply -translate-y-0.5 border-cyber-primary/30 bg-cyber-dark/85;
+  box-shadow: 0 0 20px theme('colors.cyber.primary' / 10%);
 }
 
 .card::before {
   content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(0, 255, 196, 0.05), transparent);
-  transition: all 0.6s ease;
+  @apply absolute top-0 -left-full w-full h-full transition-all;
+  background: linear-gradient(120deg, transparent, theme('colors.cyber.primary' / 5%), transparent);
   z-index: 1;
 }
 
 .card:hover::before {
-  left: 100%;
+  @apply left-full;
 }
 
 .card > * {
-  position: relative;
-  z-index: 2;
+  @apply relative z-10;
 }
 
 /* 見出しスタイル */
 .heading {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  color: rgb(0, 195, 255);
-  font-family: 'Cyber', monospace;
-  position: relative;
-  display: inline-block;
+  @apply text-xl mb-4 text-cyber-secondary font-cyber relative inline-block;
 }
 
 .heading::after {
   content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, rgb(0, 255, 196), transparent);
+  @apply absolute -bottom-1 left-0 w-full h-0.5;
+  background: linear-gradient(90deg, theme('colors.cyber.primary'), transparent);
 }
 
 /* リンクスタイル */
 .link {
-  padding-bottom: 2px;
-  position: relative;
+  @apply pb-0.5 relative;
 }
 
 .link::after {
   content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 196, 0.8), transparent);
-  transition: width 0.3s ease;
+  @apply absolute -bottom-0.5 left-0 w-0 h-0.5 transition-all duration-300;
+  background: linear-gradient(90deg, transparent, theme('colors.cyber.primary' / 80%), transparent);
 }
 
 .link:hover::after,
 .link.active::after {
-  width: 100%;
+  @apply w-full;
 }
 
 /* 背景グラデーション */
 .gradient {
-  background: linear-gradient(to bottom, rgba(13, 17, 23, 0.95), rgba(13, 17, 23, 0.8));
-  flex-grow: 1;
-  position: relative;
+  @apply bg-gradient-to-b from-cyber-dark/95 to-cyber-dark/80 flex-grow relative;
 }
 
 .gradient::before {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 196, 0.2), transparent);
+  @apply absolute top-0 left-0 right-0 h-px;
+  background: linear-gradient(90deg, transparent, theme('colors.cyber.primary' / 20%), transparent);
 }
 
 /* 選択時のスタイル */
 ::selection {
-  background: rgba(0, 255, 196, 0.3);
-  color: #fff;
+  @apply bg-cyber-primary/30 text-white;
 }
 
 /* タグスタイル */
 [data-post-tag] {
-  @apply text-xs md:text-sm px-3 py-1 rounded-full bg-[rgba(0,255,196,0.1)] text-cyber-primary transition-all;
+  @apply text-xs md:text-sm px-3 py-1 rounded-full bg-cyber-primary/10 text-cyber-primary transition-all;
 }
 
 [data-post-tag]:hover {
-  background-color: rgba(0, 255, 196, 0.15);
+  @apply bg-cyber-primary/15;
 }
 
 /* トランジション */

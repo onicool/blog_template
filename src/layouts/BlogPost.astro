@@ -130,7 +130,7 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
     });
 
     // スタイル適用
-    preElement.className = `${preElement.className} relative rounded-lg border border-cyber-primary bg-cyber-dark p-4 overflow-x-auto`;
+    preElement.className = `${preElement.className} box relative overflow-x-auto`;
 
     // DOM構造の再構築
     preElement.parentNode?.insertBefore(wrapper, preElement);
@@ -169,7 +169,7 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
   .prose {
     --tw-prose-invert-headings: theme(colors.cyber.primary);
     --tw-prose-invert-links: theme(colors.cyber.secondary);
-    --tw-prose-invert-pre-bg: theme(colors.cyber.dark);
+    /* --tw-prose-invert-pre-bgを削除 */
 
     h2{
       color: theme(colors.cyber.primary);
@@ -182,8 +182,5 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
     }
   }
   
-  .prose pre {
-    border: 1px solid theme(colors.cyber.primary);
-    border-radius: 0.5rem;
-  }
+
 </style>

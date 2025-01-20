@@ -24,8 +24,8 @@ export default {
           css: {
             '--tw-prose-body': '#4b5563',
             '--tw-prose-headings': '#374151',
-            '--tw-prose-links': '#059669',
-            '--tw-prose-code': '#059669',
+            '--tw-prose-links': '#00ff9f',
+            '--tw-prose-code': '#00ff9f',
             '--tw-prose-pre-bg': '#f3f4f6',
             '--tw-prose-invert-body': '#d1d5db',
             '--tw-prose-invert-headings': '#00ff9f',

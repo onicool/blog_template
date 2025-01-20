@@ -10,7 +10,9 @@ export default {
           'secondary': '#00b8ff',
           'accent': '#ff00ff',
           'dark': '#0a0a0a',
-          'light': '#1a1a1a'
+          'light': '#1a1a1a',
+          'header2': '#BE4BDB',
+          'header3': '#0FF0FC'
         }
       },
       fontFamily: {

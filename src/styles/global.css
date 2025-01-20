@@ -1,8 +1,22 @@
 :root {
   color-scheme: dark;
+  --box-light: rgba(0, 255, 196, 0.8);
+  --box-dark: rgba(0, 255, 196, 0.2);
+
 }
 
+/* 色 */
+
+
 /* 基本のボックススタイル */
+.box {
+  background: rgba(17, 21, 28, 0.8);
+  border: 1px solid rgba(0, 255, 196, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
 .thin_box {
   background: rgba(17, 21, 28, 0.8);
   border: 1px solid rgba(0, 255, 196, 0.2);

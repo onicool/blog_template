@@ -1,0 +1,12 @@
+---
+import CodeBlock from './CodeBlock';
+
+interface Props {
+  code: string;
+  language?: string;
+}
+
+const { code, language = 'plaintext' } = Astro.props;
+---
+
+<CodeBlock client:load code={code} language={language} />

@@ -1,0 +1,129 @@
+---
+---
+<form class="contact-form box" id="contactForm">
+ 
+  <div class="flex"></div>
+  <div class="form-group thin_box">
+    <label for="name">氏名</label>
+    <input 
+      type="text" 
+      id="name" 
+      name="name" 
+      required
+      class="bg-[rgba(13,17,23,0.7)] border border-[rgba(0,255,196,0.2)] rounded p-2 focus:border-[rgba(0,255,196,0.4)] transition-all"
+    >
+  </div>
+ 
+  <div class="form-group thin_box">
+    <label for="email">メールアドレス</label>
+    <input 
+      type="email" 
+      id="email" 
+      name="email" 
+      required
+      class="bg-[rgba(13,17,23,0.7)] border border-[rgba(0,255,196,0.2)] rounded p-2 focus:border-[rgba(0,255,196,0.4)] transition-all"
+    >
+  </div>
+  
+  <div class="form-group thin_box">
+    <label for="title">タイトル</label>
+    <input 
+      type="text" 
+      id="title" 
+      name="title"
+      class="bg-[rgba(13,17,23,0.7)] border border-[rgba(0,255,196,0.2)] rounded p-2 focus:border-[rgba(0,255,196,0.4)] transition-all"
+    >
+  </div>
+  
+  <div class="form-group thin_box">
+    <label for="message">問い合わせ本文</label>
+    <textarea 
+      id="message" 
+      name="message" 
+      rows="5" 
+      required
+      class="bg-[rgba(13,17,23,0.7)] border border-[rgba(0,255,196,0.2)] rounded p-2 focus:border-[rgba(0,255,196,0.4)] transition-all"
+    ></textarea>
+  </div>
+
+  <div id="formStatus" class="status-message hidden"></div>
+  
+  <button 
+    type="submit"
+    class="bg-[rgba(0,255,196,0.1)] hover:bg-[rgba(0,255,196,0.2)] text-[rgb(0,255,196)] border border-[rgba(0,255,196,0.3)] rounded px-4 py-2 transition-all"
+  >
+    送信
+  </button>
+</form>
+
+<style>
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .status-message {
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .status-message.success {
+    background: rgba(0, 255, 196, 0.1);
+    border: 1px solid rgba(0, 255, 196, 0.2);
+    color: rgb(0, 255, 196);
+  }
+
+  .status-message.error {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    color: rgb(255, 100, 100);
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('contactForm') as HTMLFormElement;
+  const statusDiv = document.getElementById('formStatus') as HTMLDivElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    submitButton.disabled = true;
+    
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        statusDiv.textContent = data.message;
+        statusDiv.className = 'status-message success';
+        form.reset();
+      } else {
+        throw new Error(data.error || 'エラーが発生しました。');
+      }
+    } catch (error) {
+      statusDiv.textContent = error.message;
+      statusDiv.className = 'status-message error';
+    } finally {
+      submitButton.disabled = false;
+      statusDiv.classList.remove('hidden');
+    }
+  });
+</script>

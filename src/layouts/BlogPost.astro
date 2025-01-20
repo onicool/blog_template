@@ -2,6 +2,7 @@
 import Layout from './Layout.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
+import CodeBlock from '../components/CodeBlock';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -55,7 +56,7 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
     </div>
 
     <div class="lg:grid lg:grid-cols-[1fr_250px] lg:gap-8">
-      <div class="prose prose-invert max-w-none">
+      <div class="prose prose-invert max-w-none" id="article-content">
         <slot />
         <RelatedPosts currentPost={post} />
       </div>
@@ -78,27 +79,90 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
 </Layout>
 
 <script>
-  function initTagLinks() {
-    const tagLinks = document.querySelectorAll('[data-tag]');
+  function wrapCodeBlock(element: HTMLElement) {
+    // preタグかcodeタグのどちらかを処理
+    const isPreElement = element.tagName === 'PRE';
+    const preElement = isPreElement ? element : element.parentElement;
+    const codeElement = isPreElement ? element.querySelector('code') : element;
     
-    tagLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const tag = link.getAttribute('data-tag');
-        if (!tag) return;
+    if (!preElement || !codeElement) return;
 
-        // 選択されたタグをセッションストレージに保存
-        sessionStorage.setItem('selectedTag', tag);
+    // コードの内容を取得
+    const code = codeElement.textContent || '';
+
+    // すでにラップされているかチェック
+    if (preElement.parentElement?.classList.contains('group')) return;
+
+    // ラッパー作成
+    const wrapper = document.createElement('div');
+    wrapper.className = 'relative group';
+
+    // コピーボタン作成
+    const button = document.createElement('button');
+    button.className = `
+      absolute top-2 right-2 px-3 py-1 
+      text-sm font-cyber rounded-md
+      transition-all duration-200
+      bg-cyber-dark text-cyber-primary border border-cyber-primary 
+      hover:text-cyber-secondary hover:border-cyber-secondary
+      opacity-0 group-hover:opacity-100 focus:opacity-100
+      z-10
+    `;
+    button.textContent = 'Copy';
+    button.setAttribute('aria-label', 'コードをコピー');
+
+    // コピー機能追加
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code);
+        button.textContent = 'Copied!';
+        button.classList.remove('bg-cyber-dark', 'text-cyber-primary', 'border-cyber-primary');
+        button.classList.add('bg-green-600', 'text-white', 'opacity-100');
         
-        // ブログページにハッシュ付きで遷移
-        window.location.href = `/blog/tag/#${tag}`;
-      });
+        setTimeout(() => {
+          button.textContent = 'Copied!';
+          button.classList.remove('bg-green-600', 'text-white', 'opacity-100');
+          button.classList.add('bg-cyber-dark', 'text-cyber-primary', 'border-cyber-primary');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    });
+
+    // スタイル適用
+    preElement.className = `${preElement.className} relative rounded-lg border border-cyber-primary bg-cyber-dark p-4 overflow-x-auto`;
+
+    // DOM構造の再構築
+    preElement.parentNode?.insertBefore(wrapper, preElement);
+    wrapper.appendChild(preElement);
+    wrapper.appendChild(button);
+  }
+
+  function initCodeBlocks() {
+    const articleContent = document.getElementById('article-content');
+    if (!articleContent) return;
+
+    // pre要素とcode要素の両方を検索
+    const preElements = articleContent.querySelectorAll('pre');
+    const codeElements = articleContent.querySelectorAll('code');
+
+    // 両方の要素をラップ
+    preElements.forEach(pre => {
+      if (pre instanceof HTMLElement) {
+        wrapCodeBlock(pre);
+      }
+    });
+    codeElements.forEach(code => {
+      if (code instanceof HTMLElement && (!code.parentElement?.parentElement?.classList.contains('group'))) {
+        wrapCodeBlock(code);
+      }
     });
   }
 
   // 初期化
-  initTagLinks();
-  document.addEventListener('astro:page-load', initTagLinks);
+  initCodeBlocks();
+  // Astroページ遷移時の再初期化
+  document.addEventListener('astro:page-load', initCodeBlocks);
 </script>
 
 <style>
@@ -106,6 +170,16 @@ const { title, description, pubDate, updatedDate, tags } = post.data;
     --tw-prose-invert-headings: theme(colors.cyber.primary);
     --tw-prose-invert-links: theme(colors.cyber.secondary);
     --tw-prose-invert-pre-bg: theme(colors.cyber.dark);
+
+    h2{
+      color: theme(colors.cyber.primary);
+    }
+    h3{
+      color: theme(colors.cyber.header2);
+    }
+    h4{
+      color: theme(colors.cyber.header3);
+    }
   }
   
   .prose pre {

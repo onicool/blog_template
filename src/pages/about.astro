@@ -2,6 +2,8 @@
 import { siteConfig } from '../config/site';
 import Layout from '../layouts/Layout.astro';
 import { getEntry } from 'astro:content';
+import ContactForm from '../components/ContactForm.astro';
+import '../styles/contact-form.css';
 
 const aboutData = await getEntry('about', 'profile');
 const { profile, skills, social } = aboutData.data;
@@ -33,7 +35,8 @@ import '../styles/about.css';
         <div class="thin_box">
           <p class="text-gray-300">{profile.description}</p>
         </div>
-        <h3 class="cyber-text mb-2">コンタクト</h3>
+        <h3 class="cyber-text mb-2">SNS
+        </h3>
         <div class="thin_box">
           {social.map(({ platform, url }) => (
           <a
@@ -63,6 +66,13 @@ import '../styles/about.css';
             </ul>
           </div>
         ))}
+      </div>
+    </div>
+    <!-- コンタクトフォーム -->
+    <div class="mt-8">
+      <h2 class="heading">Contact</h2>
+      <div class="skills-grid">
+        <ContactForm />
       </div>
     </div>
 

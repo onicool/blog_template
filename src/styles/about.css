@@ -106,7 +106,6 @@
 }
 
 .handle-overlay::before {
-    content: '@';
     color: rgb(0, 255, 196);
     margin-right: 0.25rem;
 }

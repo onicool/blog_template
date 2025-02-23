@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
+import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
   site: 'https://www.nameless-traders-note.site/',
@@ -32,5 +33,7 @@ export default defineConfig({
     'X-XSS-Protection': '1; mode=block',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
-  }
+  }, 
+  output: 'server',
+  adapter: vercel(),
 });

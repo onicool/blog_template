@@ -19,10 +19,12 @@
     "astro": "^5.1.7",
     "form-data": "^4.0.1",
     "fuse.js": "^7.0.0",
+    "lightbox2": "^2.11.5",
     "lit": "^3.2.1",
     "mailgun.js": "^11.1.0",
     "nanostores": "^0.9.5",
-    "react": "^19.0.0"
+    "react": "^19.0.0",
+    "yet-another-react-lightbox": "^3.21.7"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
